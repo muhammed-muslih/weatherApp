@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import colors from "colors";
 import connectDB from "./config/db.js";
 import cors from "cors";
+import errorHandler from "./middlewares/errorHandler.js";
+import AppError from "./utils/appError.js";
 
 dotenv.config();
 
@@ -16,6 +18,14 @@ server.use(cors());
 
 //database connection
 connectDB();
+
+//catch not founded routes and forwards to error handler
+server.all("*", (req, res, next) => {
+    next(new AppError("Not found", 404));
+  });
+  
+  //error handler
+  server.use(errorHandler);
 
 //server connection
 const PORT = process.env.PORT || 3000;
